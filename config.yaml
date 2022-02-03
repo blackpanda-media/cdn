@@ -1,0 +1,11 @@
+# open | close
+mode: close
+whitelist:
+  - fonts.gstatic.com
+  - fonts.googleapis.com
+  - kit.fontawesome.com
+  - ka-f.fontawesome.com
+  - cdn.jsdelivr.com
+cache:
+  enabled: false
+  ttl: 1D
