@@ -41,7 +41,7 @@ class FileRetrieveHandler implements HandlerInterface
             $cachedFile = $this->fileAdapter->checkCachedFile($requestData->getHash());
             if ($cachedFile instanceof ResponseData) {
                 foreach ($cachedFile->getHeaders() as $header => $value) {
-                    $response->withHeader($header, $value);
+                    $response->withAddedHeader($header, $value);
                 }
                 $response->getBody()->write($cachedFile->getBody());
 

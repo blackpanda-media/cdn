@@ -1,12 +1,12 @@
 # open | close
 mode: close
-whitelist:
+whiteList:
   - fonts.gstatic.com
   - fonts.googleapis.com
   - kit.fontawesome.com
   - ka-f.fontawesome.com
   - cdn.jsdelivr.com
 cache:
-  enabled: false
+  enabled: true
   ttl: P1D
 debug: true

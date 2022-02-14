@@ -22,4 +22,15 @@ class ResponseData
     {
         return $this->body;
     }
+
+    public function __serialize(): array
+    {
+        return ['headers' => $this->headers, 'body' => $this->body];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->headers = $data['headers'];
+        $this->body = $data['body'];
+    }
 }

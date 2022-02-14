@@ -35,7 +35,9 @@ class SystemConfiguration
     {
         return array_filter(
             $this->whiteList,
-            static fn (string $whiteListUri) => str_starts_with($whiteListUri, $uri),
+            static fn (string $whiteListUri)
+                => str_starts_with($uri, 'http://' . $whiteListUri)
+                    || str_starts_with($uri, 'https://' . $whiteListUri),
         ) !== [];
     }
 
