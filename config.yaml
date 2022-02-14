@@ -8,4 +8,5 @@ whitelist:
   - cdn.jsdelivr.com
 cache:
   enabled: false
-  ttl: 1D
+  ttl: P1D
+debug: true

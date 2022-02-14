@@ -18,12 +18,12 @@ class RequestValidator
     {
         $hash = RouteContext::fromRequest($request)->getRoute()?->getArgument('hash');
         if ($hash === null) {
-            throw new ClientException('File to request is missing.', 404);
+            throw new ClientException('Hash is missing.', 400);
         }
 
         $uri = base64_decode($hash);
         if ($uri === false) {
-            throw new ClientException('You can only send base64 encoded uris.', 404);
+            throw new ClientException('Hash needs to be base64 encoded.', 400);
         }
 
         return new RequestData($hash, $uri);

@@ -6,7 +6,6 @@ define('ROOT_DIR', dirname(__DIR__));
 const CONFIG_DIR = ROOT_DIR . '/config';
 const LOG_DIR = ROOT_DIR . '/log';
 const CACHE_DIR = ROOT_DIR . '/cache';
-const DATABASE_DIR = ROOT_DIR . '/database';
 
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 'Off');

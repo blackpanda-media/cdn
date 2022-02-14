@@ -17,6 +17,7 @@ class SystemConfiguration
         private CacheConfiguration $cacheConfiguration,
         private array $whiteList,
         private array $blackList,
+        private bool $debug,
     ) {
     }
 
@@ -41,13 +42,18 @@ class SystemConfiguration
     public function isInBlacklist(string $uri): bool
     {
         return array_filter(
-                $this->blackList,
-                static fn (string $blackListUri) => str_starts_with($blackListUri, $uri),
-            ) !== [];
+            $this->blackList,
+            static fn (string $blackListUri) => str_starts_with($blackListUri, $uri),
+        ) !== [];
     }
 
     public function cacheConfig(): CacheConfiguration
     {
         return $this->cacheConfiguration;
+    }
+
+    public function isDebug(): bool
+    {
+        return $this->debug;
     }
 }

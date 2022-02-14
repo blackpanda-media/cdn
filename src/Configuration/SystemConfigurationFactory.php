@@ -18,6 +18,7 @@ class SystemConfigurationFactory implements FactoryInterface
             $container->get(CacheConfiguration::class),
             $baseConfig['whiteList'] ?? [],
             $baseConfig['blackList'] ?? [],
+            $baseConfig['debug'],
         );
     }
 }

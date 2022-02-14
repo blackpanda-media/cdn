@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace BPM\OwnCdn\Configuration;
 
 use BlackBonjour\ServiceManager\FactoryInterface;
+use DateInterval;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -14,6 +15,6 @@ class CacheConfigurationFactory implements FactoryInterface
     {
         $cacheConfig = Yaml::parse($container->get('config'))['cache'];
 
-        return new CacheConfiguration($cacheConfig['enabled'], $cacheConfig['ttl']);
+        return new CacheConfiguration($cacheConfig['enabled'], new DateInterval($cacheConfig['ttl']));
     }
 }

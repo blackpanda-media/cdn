@@ -7,10 +7,8 @@ namespace BPM\OwnCdn\Handler;
 use BPM\OwnCdn\Adapter\FileAdapter;
 use BPM\OwnCdn\Configuration\SystemConfiguration;
 use BPM\OwnCdn\Exception\ClientException;
-use BPM\OwnCdn\Exception\DatabaseException;
-use BPM\OwnCdn\Repository\FileRepository;
+use BPM\OwnCdn\Model\ResponseData;
 use BPM\OwnCdn\Validator\RequestValidator;
-use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\RequestInterface;
@@ -22,7 +20,6 @@ class FileRetrieveHandler implements HandlerInterface
     public function __construct(
         private SystemConfiguration $systemConfiguration,
         private Client $client,
-        private FileRepository $fileRepository,
         private FileAdapter $fileAdapter,
         private RequestValidator $requestValidator,
     ) {
@@ -39,45 +36,41 @@ class FileRetrieveHandler implements HandlerInterface
             return $response->withStatus($exception->getCode(), $exception->getMessage());
         }
 
-        if ($this->systemConfiguration->isClose()) {
-            try {
-                if ($this->fileRepository->checkFileAllowed($hash) === false) {
-                    return $response->withStatus(404);
+        // check data is cached
+        if ($this->systemConfiguration->cacheConfig()->enabled()) {
+            $cachedFile = $this->fileAdapter->checkCachedFile($requestData->getHash());
+            if ($cachedFile instanceof ResponseData) {
+                foreach ($cachedFile->getHeaders() as $header => $value) {
+                    $response->withHeader($header, $value);
                 }
-            } catch (DatabaseException $exception) {
-                return $response->withStatus(500, $exception->getMessage());
+                $response->getBody()->write($cachedFile->getBody());
+
+                return $response;
             }
         }
 
-        $response = $this->fileAdapter->openResponse($hash);
-
-        if ($response instanceof ResponseInterface && $this->systemConfiguration->cacheConfig()->enabled()) {
-            try {
-                $this->fileRepository->updateTimestamp($uri);
-            } catch (DatabaseException|Exception $exception) {
-                return $response->withStatus(500, $exception->getMessage());
-            }
-            return $response;
+        // closed system and not white listed
+        if (
+            $this->systemConfiguration->isClose()
+            && $this->systemConfiguration->isInWhitelist($requestData->getUri()) === false
+        ) {
+            return $response->withStatus(403, 'Its not allowed to load this file.');
         }
 
         try {
-            $connectorResponse = $this->client->get($uri);
+            $originalResponse = $this->client->get($requestData->getUri());
         } catch (GuzzleException $exception) {
-            return $response->withStatus(500, $exception->getMessage());
+            return $response->withStatus(504, $this->systemConfiguration->isDebug() ? $exception->getMessage() : '');
         }
 
         if ($this->systemConfiguration->cacheConfig()->enabled()) {
-            try {
-                $this->fileRepository->createNew($uri);
-            } catch (DatabaseException|Exception $exception) {
-                return $response->withStatus(500, $exception->getMessage());
-            }
-
-            if ($this->fileAdapter->saveResponse($hash, $connectorResponse) === false) {
-                return $response->withStatus(500, 'Cannot save response.');
-            }
+            $this->fileAdapter->saveResponse(
+                $requestData->getHash(),
+                $originalResponse,
+                $this->systemConfiguration->cacheConfig()
+            );
         }
 
-        return $connectorResponse;
+        return $originalResponse;
     }
 }

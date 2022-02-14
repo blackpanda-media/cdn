@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace BPM\OwnCdn\Configuration;
 
+use DateInterval;
+
 class CacheConfiguration
 {
-    public function __construct(private bool $enabled, private string $ttl)
+    public function __construct(private bool $enabled, private DateInterval $ttl)
     {
     }
 
@@ -15,7 +17,7 @@ class CacheConfiguration
         return $this->enabled;
     }
 
-    public function ttl(): string
+    public function ttl(): DateInterval
     {
         return $this->ttl;
     }

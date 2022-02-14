@@ -7,7 +7,7 @@ namespace BPM\OwnCdn\Handler;
 use BlackBonjour\ServiceManager\FactoryInterface;
 use BPM\OwnCdn\Adapter\FileAdapter;
 use BPM\OwnCdn\Configuration\SystemConfiguration;
-use BPM\OwnCdn\Repository\FileRepository;
+use BPM\OwnCdn\Validator\RequestValidator;
 use GuzzleHttp\Client;
 use Psr\Container\ContainerInterface;
 
@@ -18,8 +18,8 @@ class FileRetrieveHandlerFactory implements FactoryInterface
         return new FileRetrieveHandler(
             $container->get(SystemConfiguration::class),
             $container->get(Client::class),
-            $container->get(FileRepository::class),
             $container->get(FileAdapter::class),
+            $container->get(RequestValidator::class),
         );
     }
 }
