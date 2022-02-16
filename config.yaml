@@ -5,7 +5,7 @@ whiteList:
   - fonts.googleapis.com
   - kit.fontawesome.com
   - ka-f.fontawesome.com
-  - cdn.jsdelivr.com
+  - cdn.jsdelivr.net
 cache:
   enabled: true
   ttl: P1D
