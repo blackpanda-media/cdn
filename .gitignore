@@ -1,6 +1,0 @@
-/vendor/
-/.idea/*
-log/*
-!log/.gitkeep
-.php-cs-fixer.cache
-cache
